@@ -3,174 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4f2fd6">
 <title>My Items</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
-    --bg: #f1f5f9; --card: #ffffff; --text: #0f172a; --muted: #64748b;
-    --line: #e2e8f0; --brand: #4f46e5; --brand2: #7c3aed; --danger: #ef4444;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #0b1020; --card: #151b2e; --text: #e8ecf5; --muted: #94a3b8; --line: #263049; }
+    --bg: #070813;
+    --card: #101328;
+    --line: #232850;
+    --text: #eef0ff;
+    --muted: #8d93c4;
+    --accent: #5b3df0;
+    --danger: #ff6b7a;
+    --ok: #4ade80;
   }
   * { box-sizing: border-box; }
+  html, body { margin: 0; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
+    background: var(--bg);
+    color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
   header {
-    background: linear-gradient(135deg, var(--brand), var(--brand2));
-    color: #fff; padding: 28px 20px 60px;
+    background: linear-gradient(135deg, #5b3df0, #2a1a8f);
+    padding: calc(28px + env(safe-area-inset-top, 0)) 20px 28px;
   }
-  header h1 { margin: 0; font-size: 24px; }
-  header p { margin: 6px 0 0; opacity: .85; font-size: 14px; }
-  main { max-width: 520px; margin: -40px auto 40px; padding: 0 14px; }
+  header h1 { margin: 0 0 4px; font-size: 2rem; }
+  header p { margin: 0; opacity: .85; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
   .card {
-    background: var(--card); border-radius: 18px; padding: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.12); margin-bottom: 14px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 16px;
   }
-  .row { display: flex; gap: 8px; }
-  input {
-    flex: 1; min-width: 0; padding: 13px 14px; font-size: 16px;
-    border: 1.5px solid var(--line); border-radius: 12px;
-    background: transparent; color: var(--text); outline: none;
+  .add { display: flex; gap: 10px; }
+  input[type=text] {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 14px;
   }
-  input:focus { border-color: var(--brand); }
-  button.add {
-    padding: 0 20px; border: 0; border-radius: 12px; font-size: 16px; font-weight: 600;
-    color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand2));
+  input[type=text]:focus-visible, button:focus-visible {
+    outline: 3px solid #a99bff;
+    outline-offset: 2px;
   }
-  button.add:disabled { opacity: .6; }
-  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .top h2 { margin: 0; font-size: 16px; }
-  .pill { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--line); color: var(--muted); }
+  button {
+    background: var(--accent);
+    border: 0;
+    border-radius: 14px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0 22px;
+  }
+  .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .head h2 { margin: 0; font-size: 1.15rem; }
+  .count { background: var(--bg); border-radius: 999px; color: var(--muted); padding: 4px 12px; }
   ul { list-style: none; margin: 0; padding: 0; }
   li {
-    display: flex; justify-content: space-between; align-items: center; gap: 10px;
-    padding: 12px 4px; border-bottom: 1px solid var(--line); word-break: break-word;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
   }
-  li:last-child { border-bottom: 0; }
-  .del {
-    border: 0; background: transparent; color: var(--danger);
-    font-size: 18px; padding: 6px 10px; border-radius: 8px;
-  }
-  .empty { text-align: center; color: var(--muted); padding: 24px 0; }
-  .banner {
-    display: none; background: #fee2e2; color: #991b1b;
-    padding: 12px 14px; border-radius: 12px; margin-bottom: 14px; font-size: 14px;
-  }
-  .toast {
-    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(80px);
-    background: #111827; color: #fff; padding: 10px 18px; border-radius: 999px;
-    font-size: 14px; transition: transform .25s; z-index: 10;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  li input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--ok); flex: none; }
+  li span { flex: 1; overflow-wrap: anywhere; }
+  li.done span { color: var(--muted); text-decoration: line-through; }
+  li button.del { background: transparent; color: var(--danger); font-size: 1.2rem; padding: 6px 10px; }
+  .empty { color: var(--muted); padding: 14px 0 4px; }
+  .note { color: var(--muted); font-size: .85rem; text-align: center; }
 </style>
 </head>
 <body>
 <header>
   <h1>📋 My Items</h1>
-  <p>Flask + SQLite, built on your phone</p>
+  <p>Works offline. Saved on this phone.</p>
 </header>
 
 <main>
-  <div class="banner" id="banner">
-    ⚠️ Server offline. Open Pydroid 3 and run <b>app.py</b>, then reload this page.
-  </div>
-
   <div class="card">
-    <div class="row">
-      <input id="name" placeholder="Add a new item..." maxlength="100" autocomplete="off">
-      <button class="add" id="addBtn" onclick="addItem()">Add</button>
+    <div class="add">
+      <input type="text" id="newItem" placeholder="Add a new item..." autocomplete="off" aria-label="New item">
+      <button id="addBtn" type="button">Add</button>
     </div>
   </div>
 
   <div class="card">
-    <div class="top">
+    <div class="head">
       <h2>Saved items</h2>
-      <span class="pill" id="count">0</span>
+      <span class="count" id="count">0</span>
     </div>
     <ul id="list"></ul>
-    <div class="empty" id="empty" style="display:none">No items yet. Add your first one above ✨</div>
+    <p class="empty" id="empty">No items yet. Type one above and tap Add.</p>
   </div>
+
+  <p class="note">Data stays in this browser or app. Clearing app data deletes it.</p>
 </main>
 
-<div class="toast" id="toast"></div>
-
 <script>
-  const API = "/api/items";
-  const nameEl = document.getElementById("name");
-  const addBtn = document.getElementById("addBtn");
+  var KEY = "my-items-v1";
+  var items = [];
 
-  function toast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2000);
-  }
-
-  function esc(s) {
-    const d = document.createElement("div");
-    d.textContent = s;
-    return d.innerHTML;
-  }
-
-  function setOffline(off) {
-    document.getElementById("banner").style.display = off ? "block" : "none";
-  }
-
-  async function load() {
+  function load() {
     try {
-      const res = await fetch(API, { cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const items = await res.json();
-      setOffline(false);
-      document.getElementById("count").textContent = items.length;
-      document.getElementById("empty").style.display = items.length ? "none" : "block";
-      document.getElementById("list").innerHTML = items.map(i =>
-        `<li><span>${esc(i.name)}</span>
-         <button class="del" onclick="removeItem(${i.id})" aria-label="Delete">🗑</button></li>`
-      ).join("");
+      var raw = localStorage.getItem(KEY);
+      items = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(items)) items = [];
     } catch (e) {
-      setOffline(true);
+      items = [];
     }
   }
 
-  async function addItem() {
-    const name = nameEl.value.trim();
-    if (!name) { toast("Type something first"); return; }
-    addBtn.disabled = true;
+  function save() {
     try {
-      const res = await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name })
-      });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      nameEl.value = "";
-      toast("Added ✓");
-      await load();
+      localStorage.setItem(KEY, JSON.stringify(items));
     } catch (e) {
-      setOffline(true);
-      toast("Could not add: " + e.message);
-    } finally {
-      addBtn.disabled = false;
+      alert("Could not save. Storage may be full or blocked.");
     }
   }
 
-  async function removeItem(id) {
-    try {
-      const res = await fetch(API + "/" + id, { method: "DELETE" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      toast("Deleted");
-      load();
-    } catch (e) {
-      setOffline(true);
-      toast("Could not delete: " + e.message);
-    }
+  function render() {
+    var list = document.getElementById("list");
+    list.innerHTML = "";
+    items.forEach(function (item) {
+      var li = document.createElement("li");
+      if (item.done) li.className = "done";
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!item.done;
+      cb.setAttribute("aria-label", "Mark done");
+      cb.onchange = function () { item.done = cb.checked; save(); render(); };
+
+      var span = document.createElement("span");
+      span.textContent = item.text;
+
+      var del = document.createElement("button");
+      del.className = "del";
+      del.type = "button";
+      del.textContent = "✕";
+      del.setAttribute("aria-label", "Delete item");
+      del.onclick = function () {
+        items = items.filter(function (i) { return i.id !== item.id; });
+        save(); render();
+      };
+
+      li.appendChild(cb);
+      li.appendChild(span);
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+    document.getElementById("count").textContent = items.length;
+    document.getElementById("empty").style.display = items.length ? "none" : "block";
   }
 
-  nameEl.addEventListener("keydown", e => { if (e.key === "Enter") addItem(); });
+  function addItem() {
+    var input = document.getElementById("newItem");
+    var text = input.value.trim();
+    if (!text) return;
+    items.unshift({ id: Date.now(), text: text, done: false });
+    input.value = "";
+    save(); render();
+    input.focus();
+  }
+
+  document.getElementById("addBtn").onclick = addItem;
+  document.getElementById("newItem").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") addItem();
+  });
+
   load();
+  render();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("service-worker.js").catch(function () {});
+    });
+  }
 </script>
 </body>
 </html>
